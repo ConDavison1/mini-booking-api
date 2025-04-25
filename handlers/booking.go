@@ -9,12 +9,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
+
 // BookingReq is the request structure for creating a booking
 // It contains the program ID and username fields that are required for booking a program.
 type BookingReq struct {
 	ProgramID string `json:"program_id" validate:"required"`
 	Username  string `json:"user_name" validate:"required"`
 }
+
 // CreateBooking creates a new booking in the database for a specific program and user.
 func CreateBooking(c *fiber.Ctx) error {
 	var req BookingReq
@@ -30,12 +32,12 @@ func CreateBooking(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": "Program not found",
-		})// Check if the program exists in the database
+		}) // Check if the program exists in the database
 	}
 	if registered >= capacity {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "No spaces available",
-		})// Check if the program is full
+		}) // Check if the program is full
 	}
 
 	// Create a new booking
@@ -62,10 +64,10 @@ func CreateBooking(c *fiber.Ctx) error {
 }
 
 type Booking struct {
-	ID        string `json:"id"`
-	ProgramID string `json:"program_id"`
-	UserName  string `json:"user_name"`
-	CreatedAt string `json:"created_at"`
+	ID        string    `json:"id"`
+	ProgramID string    `json:"program_id"`
+	UserName  string    `json:"user_name"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // GetBookings retrieves all bookings from the database with pagination support.
@@ -91,10 +93,12 @@ func GetBookings(c *fiber.Ctx) error {
 	for rows.Next() {
 		var b Booking
 		if err := rows.Scan(&b.ID, &b.ProgramID, &b.UserName, &b.CreatedAt); err != nil {
+			log.Println("SCAN ERROR (GetBookings):", err)
 			continue
 		}
 		bookings = append(bookings, b)
 	}
+	log.Printf("Total bookings retrieved: %d\n", len(bookings))
 	// return the bookings in JSON format
 	return c.JSON(fiber.Map{
 		"page":     page,
