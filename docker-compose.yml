@@ -1,6 +1,5 @@
-version: '3.8'
-#docker-compose.yml for the seed file
-# This file is used to set up a PostgreSQL database with a seed file for initial data
+version: "3.9"
+
 services:
   db:
     image: postgres:14
@@ -14,3 +13,18 @@ services:
       - "5432:5432"
     volumes:
       - ./db/seedfile.sql:/docker-entrypoint-initdb.d/seed.sql
+
+  api:
+    build: .
+    container_name: booking_api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: booking
+      JWT_SECRET: riseAPI
