@@ -15,6 +15,13 @@ I used AI to assist with:
 - "Dockerize a Go Fiber app and connect it with Postgres using docker-compose"
 - "Add pagination to a GET route in Fiber using query parameters"
 - "Fix Go scan error: cannot scan date into string"
+- When testing the /bookings endpoint, I encountered an issue where the response always returned:
+```json
+{
+  "bookings": null,
+  "results": 0
+}
+```
 
 ---
 
@@ -28,6 +35,7 @@ I used AI to assist with:
 - **Pagination**: I asked how to implement pagination using LIMIT and OFFSET in Fiber. I tweaked it to include metadata in the JSON response (e.g., current page, results count).
 
 - **Error Debugging**: AI helped explain scan errors (e.g., cannot scan date into string). I applied the fix by switching to time.Time and restructured the model fields accordingly.
+  - Using ChatGPT, I tried to figure out the underlying problem and confirmed that the PostgreSQL created_at field (a TIMESTAMP) could not be scanned into a Go string type. This caused rows to silently fail during Scan.
 
 ---
 
